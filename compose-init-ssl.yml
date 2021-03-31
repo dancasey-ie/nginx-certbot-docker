@@ -3,9 +3,10 @@ services:
     nginx: 
         image: nginx:latest
         restart: always
-        args:
-            DOMAIN: ${DOMAIN}
-            EMAIL: ${EMAIL}
+        build:
+            args:
+                DOMAIN: ${DOMAIN}
+                EMAIL: ${EMAIL}
         volumes:
             - ./public:/var/www/html
             - ./nginx/conf.d.init_ssl:/etc/nginx/conf.d
@@ -18,9 +19,10 @@ services:
     certbot:
         image: certbot/certbot:latest
         command: certonly --webroot --webroot-path=/var/www/certbot --email ${EMAIL} --agree-tos --no-eff-email -d ${DOMAIN}
-        args:
-            DOMAIN: ${DOMAIN}
-            EMAIL: ${EMAIL}
+        build:
+            args:
+                DOMAIN: ${DOMAIN}
+                EMAIL: ${EMAIL}
         volumes:
             - ./certbot/conf:/etc/letsencrypt
             - ./certbot/logs:/var/log/letsencrypt
