@@ -4,7 +4,7 @@ services:
         image: nginx:latest
         restart: always
         build:
-            context: ./nginx
+            context: ./
             args:
                 DOMAIN: ${DOMAIN}
                 EMAIL: ${EMAIL}
