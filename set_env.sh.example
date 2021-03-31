@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Rename set_env.sh and set your email and domain name
+
+# Email to get alerts from LetsEncrypt.
+export EMAIL="info@example.com"
+echo 'EMAIL="'$EMAIL'"'
+# Domain name or subdomain linked to your server's public IP.
+export DOMAIN="example.com"
+echo 'DOMAIN="'$DOMAIN'"'
+
