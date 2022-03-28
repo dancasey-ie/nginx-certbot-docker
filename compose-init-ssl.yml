@@ -24,6 +24,7 @@ services:
     environment:
       - DOMAIN
       - EMAIL
+    # command below initiates LetsEncrypt SSL certificates
     command: certonly --webroot --webroot-path=/var/www/certbot --email $EMAIL --agree-tos --no-eff-email -d $DOMAIN -d www.$DOMAIN
     volumes:
       - ./certbot/conf:/etc/letsencrypt

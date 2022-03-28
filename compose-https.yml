@@ -17,7 +17,10 @@ services:
     image: nginx:1.19-alpine
     environment:
       - DOMAIN
+    # entrypoint script to initiate template substitution of .conf files
+    # env variable substitution is not possible in the normal nginx .conf files
     entrypoint: ["/entrypoint.sh"]
+    # command below reloads nginx every 6 hrs to pick up on an certbot renewals
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
     ports:
       - "80:80"
@@ -34,6 +37,7 @@ services:
     image: certbot/certbot:latest
     environment:
       - DOMAIN
+    # command below checks if certs need renewal ever 12 hours and renews if needed
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
     volumes:
       - ./certbot/conf:/etc/letsencrypt

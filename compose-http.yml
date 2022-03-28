@@ -1,11 +1,13 @@
 version: '3'
 
 services:
+  # remove or replace my_app_1 with your own app config
   my_app_1:
     container_name: my_app_1
     image: alpine:latest
     ports:
       - "8090:8080"
+  # remove or replace my_app_2 with your own app config
   my_app_2:
     container_name: my_app_2
     image: alpine:latest
@@ -17,7 +19,9 @@ services:
     image: nginx:1.19-alpine
     environment:
       - DOMAIN
-    entrypoint: ["/entrypoint.sh"]
+    # entrypoint script to initiate template substitution of .conf files
+    # env variable substitution is not possible in the normal nginx .conf files
+    entrypoint: ["/entrypoint.sh"] 
     command: "/bin/sh -c 'nginx -g \"daemon off;\"'"
     ports:
       - "80:80"
