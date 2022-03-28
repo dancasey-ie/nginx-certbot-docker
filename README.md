@@ -21,11 +21,12 @@ git clone https://github.com/dancasey-ie/nginx-certbot-docker
 cd nginx-certbot-docker
 ```
 
-Set your domain and email variables
+Set your domain and email variables for generating your LetsEncrypt certificate
 ```bash
-export DOMAIN=example.com
-export EMAIL=info@example.com
+export DOMAIN=<your_hosted_domain>
+export EMAIL=<your_email>
 ```
+Configure your DNS to direct both "\<your_hosted_domain>" and "www.\<your_hosted_domain>" to your server.
 
 If you just want to run using non-secured http:
 ```bash
