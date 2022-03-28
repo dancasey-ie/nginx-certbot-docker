@@ -1,6 +1,6 @@
 NGINX-Certbot-Docker
 =========================================================
-Boilerplate code for setting up Nginx + Certbot (LetsEncrypt) using docker-compose. This is really for testing, playing and understanding (I hope).
+Boilerplate code for setting up Nginx + Certbot (LetsEncrypt) with auto-renewal using docker-compose. This is really for testing, playing and understanding (I hope).
 
 
 ## Why?
