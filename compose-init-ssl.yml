@@ -1,26 +1,31 @@
-version: "3.8"
-services:
-    nginx: 
-        image: nginx:latest
-        restart: always
-        build:
-            context: ./nginx
-            args:
-                DOMAIN: ${DOMAIN}
-                EMAIL: ${EMAIL}
-        volumes:
-            - ./public:/var/www/html
-            - ./nginx/conf.d.init_ssl:/etc/nginx/conf.d
-            - ./certbot/conf:/etc/nginx/ssl
-            - ./certbot/data:/var/www/certbot
-        ports:
-            - 80:80
-            - 443:443
+version: '3'
 
-    certbot:
-        image: certbot/certbot:latest
-        command: certonly --webroot --webroot-path=/var/www/certbot --email ${EMAIL} --agree-tos --no-eff-email -d ${DOMAIN}
-        volumes:
-            - ./certbot/conf:/etc/letsencrypt
-            - ./certbot/logs:/var/log/letsencrypt
-            - ./certbot/data:/var/www/certbot
+services:
+  nginx:
+    container_name: nginx
+    restart: always
+    image: nginx:1.19-alpine
+    environment:
+      - DOMAIN
+    entrypoint: ["/entrypoint.sh"]
+    command: "/bin/sh -c 'nginx -g \"daemon off;\"'"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/public:/var/www/html
+      - ./nginx/conf.d.init_ssl:/etc/nginx/templates
+      - ./nginx/entrypoint.sh:/entrypoint.sh
+      - ./certbot/conf:/etc/nginx/ssl
+      - ./certbot/data:/var/www/certbot
+  certbot:
+    container_name: certbot
+    image: certbot/certbot:latest
+    environment:
+      - DOMAIN
+      - EMAIL
+    command: certonly --webroot --webroot-path=/var/www/certbot --email $EMAIL --agree-tos --no-eff-email -d $DOMAIN -d www.$DOMAIN
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/logs:/var/log/letsencrypt
+      - ./certbot/data:/var/www/certbot

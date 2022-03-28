@@ -1,4 +1,2 @@
 certbot/
-set_env.sh
 .DS_Store
-.env

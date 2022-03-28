@@ -2,7 +2,6 @@ NGINX-Certbot-Docker
 =========================================================
 Boilerplate code for setting up Nginx + Certbot (LetsEncrypt) using docker-compose. This is really for testing, playing and understanding (I hope).
 
-Adapted from https://www.cloudbooklet.com/how-to-install-nginx-and-lets-encrypt-with-docker-ubuntu-20-04/
 
 ## Why?
 I found many repos and tutorials online for setting up LetsEncrypt SSL certificates for Nginx containers, but found them hard to follow and many wrapped important bits in automated scripts.
@@ -24,21 +23,20 @@ cd nginx-certbot-docker
 
 Set your domain and email variables
 ```bash
-cp set_env.sh.example set_env.sh
-vim set_env.sh # set your variables
-source set_env.sh
+export DOMAIN=example.com
+export EMAIL=info@example.com
 ```
 
 If you just want to run using non-secured http:
 ```bash
-docker-compose -f compose-http.yml up # sh run_http.sh
+docker-compose -f compose-http.yml up # make up_http
 ```
 
 If you want to run using https you first must run without https and ask Certbot for a certifcate:
 ```bash
-docker-compose -f compose-init-ssl.yml up # sh run_init_ssl.sh
+docker-compose -f compose-init-ssl.yml up # make init_ssl
 ```
 Exit with CTRL+C. Then run:
 ```bash
-docker-compose -f compose-https.yml up # sh run_https.sh
+docker-compose -f compose-https.yml up # make up
 ```

@@ -1,21 +1,45 @@
-version: "3.8"
-services:
-    nginx: 
-        image: nginx:latest
-        restart: always
-        volumes:
-            - ./public:/var/www/html
-            - ./nginx/conf.d:/etc/nginx/conf.d
-            - ./certbot/conf:/etc/nginx/ssl
-            - ./certbot/data:/var/www/certbot
-        ports:
-            - 80:80
-            - 443:443
+version: '3'
 
-    certbot:
-        image: certbot/certbot:latest
-        command: certonly --webroot --webroot-path=/var/www/certbot --email ${EMAIL} --agree-tos --no-eff-email -d ${DOMAIN}
-        volumes:
-            - ./certbot/conf:/etc/letsencrypt
-            - ./certbot/logs:/var/log/letsencrypt
-            - ./certbot/data:/var/www/certbot
+services:
+  my_app_1:
+    container_name: my_app_1
+    image: <some_image>
+    ports:
+      - "8090:8080"
+  my_app_2:
+    container_name: my_app_2
+    image: <some_image>
+    ports:
+      - "8080:8080"
+  nginx:
+    container_name: nginx
+    restart: always
+    image: nginx:1.19-alpine
+    environment:
+      - DOMAIN
+    # entrypoint script to initiate template substitution of .conf files
+    # env variable substitution is not possible in the normal nginx .conf files
+    entrypoint: ["/entrypoint.sh"]
+    # command below reloads nginx every 6 hrs to pick up on an certbot renewals
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/public:/var/www/html
+      - ./nginx/conf.d.https:/etc/nginx/templates
+      - ./nginx/entrypoint.sh:/entrypoint.sh
+      - ./certbot/conf:/etc/nginx/ssl
+      - ./certbot/data:/var/www/certbot
+  certbot:
+    container_name: certbot
+    restart: always
+    image: certbot/certbot:latest
+    environment:
+      - DOMAIN
+    # command below checks if certs need renewal ever 12 hours and renews if needed
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/logs:/var/log/letsencrypt
+      - ./certbot/data:/var/www/certbot
